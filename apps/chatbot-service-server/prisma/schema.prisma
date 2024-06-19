@@ -1,0 +1,55 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model ChatFlow {
+  createdAt    DateTime      @default(now())
+  customFields CustomField[]
+  description  String?
+  id           String        @id @default(cuid())
+  isActive     Boolean?
+  name         String?
+  triggers     Trigger[]
+  updatedAt    DateTime      @updatedAt
+}
+
+model Trigger {
+  chatFlow   ChatFlow?             @relation(fields: [chatFlowId], references: [id])
+  chatFlowId String?
+  createdAt  DateTime              @default(now())
+  id         String                @id @default(cuid())
+  typeField  EnumTriggerTypeField?
+  updatedAt  DateTime              @updatedAt
+  value      String?
+}
+
+model CustomField {
+  chatFlow   ChatFlow? @relation(fields: [chatFlowId], references: [id])
+  chatFlowId String?
+  createdAt  DateTime  @default(now())
+  id         String    @id @default(cuid())
+  name       String?
+  updatedAt  DateTime  @updatedAt
+  value      String?
+}
+
+model User {
+  createdAt DateTime @default(now())
+  email     String?  @unique
+  firstName String?
+  id        String   @id @default(cuid())
+  lastName  String?
+  password  String
+  roles     Json
+  updatedAt DateTime @updatedAt
+  username  String   @unique
+}
+
+enum EnumTriggerTypeField {
+  Option1
+}
